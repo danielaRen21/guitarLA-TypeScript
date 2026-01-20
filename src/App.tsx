@@ -3,20 +3,15 @@
 import { useReducer } from "react";
 import Card from "./components/Card";
 import Header from "./components/Header";
-import { useCart } from "./hooks/useCart";
 import { cartReducer, initialState } from "./reducers/cart-reducer";
 
 function App() {
-  const { decrementQuantity, increaseQuantity, clearCart } = useCart();
   const [state, dispatch] = useReducer(cartReducer, initialState);
   return (
     <>
       <Header
         cart={state.cart}
         dispatch={dispatch}
-        increaseQuantity={increaseQuantity}
-        decrementQuantity={decrementQuantity}
-        clearCart={clearCart}
       />
       <main className='container-xl mt-5'>
         <h2 className='text-center'>Nuestra Colección</h2>

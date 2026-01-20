@@ -21,7 +21,7 @@ export type CartActions =
       payload: { id: Guitar["id"] };
     }
   | {
-      type: "clear-quantity";
+      type: "clear-cart";
     };
 export type CartState = {
   data: Guitar[];
@@ -31,6 +31,8 @@ export const initialState: CartState = {
   data: db,
   cart: [],
 };
+const MAX_ITEMS = 5;
+const MIN_ITEMS = 2;
 export const cartReducer = (
   state: CartState = initialState,
   action: CartActions
@@ -44,7 +46,7 @@ export const cartReducer = (
     if (itemExists >= 0) {
       updateCart = state.cart.map((item) => {
         if (item.id === action.payload.item.id) {
-          if (item.quantity < 1) {
+          if (item.quantity <= MIN_ITEMS) {
             return { ...item, quantity: item.quantity + 1 };
           } else {
             return item;
@@ -66,13 +68,31 @@ export const cartReducer = (
     return { ...state, cart: updatedCart };
   }
   if (action.type === "decrease-quantity") {
-    return { ...state };
+    const updateCart = state.cart.map((item) => {
+      if (item.id === action.payload.id && item.quantity >= MIN_ITEMS) {
+        return {
+          ...item,
+          quantity: item.quantity - 1,
+        };
+      }
+      return item;
+    });
+    return { ...state, cart: updateCart };
   }
   if (action.type === "increase-quantity") {
-    return { ...state };
+    const updatedCart = state.cart.map((item) => {
+      if (item.id === action.payload.id && item.quantity < MAX_ITEMS) {
+        return {
+          ...item,
+          quantity: item.quantity + 1,
+        };
+      }
+      return item;
+    });
+    return { ...state, cart: updatedCart };
   }
-  if (action.type === "clear-quantity") {
-    return {};
+  if (action.type === "clear-cart") {
+    return { ...state, cart: [] };
   }
   return state;
 };

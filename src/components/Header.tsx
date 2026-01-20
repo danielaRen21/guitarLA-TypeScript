@@ -1,22 +1,13 @@
 /** @format */
 
 import { useMemo } from "react";
-import type { CartItem, Guitar } from "../types";
+import type { CartItem } from "../types";
 import type { CartActions } from "../reducers/cart-reducer";
 type HeaderProps = {
   cart: CartItem[];
   dispatch: React.ActionDispatch<[action: CartActions]>;
-  increaseQuantity: (id: Guitar["id"]) => void;
-  decrementQuantity: (id: Guitar["id"]) => void;
-  clearCart: () => void;
 };
-export default function Header({
-  cart,
-  dispatch,
-  increaseQuantity,
-  decrementQuantity,
-  clearCart,
-}: HeaderProps) {
+export default function Header({ cart, dispatch }: HeaderProps) {
   //State Derivado
   const isEmpty = useMemo(() => cart.length === 0, [cart]);
   const cartTotal = useMemo(
@@ -77,7 +68,12 @@ export default function Header({
                             <button
                               type='button'
                               className='btn btn-dark'
-                              onClick={() => decrementQuantity(guitar.id)}
+                              onClick={() =>
+                                dispatch({
+                                  type: "decrease-quantity",
+                                  payload: { id: guitar.id },
+                                })
+                              }
                             >
                               -
                             </button>
@@ -85,7 +81,12 @@ export default function Header({
                             <button
                               type='button'
                               className='btn btn-dark'
-                              onClick={() => increaseQuantity(guitar.id)}
+                              onClick={() =>
+                                dispatch({
+                                  type: "increase-quantity",
+                                  payload: { id: guitar.id },
+                                })
+                              }
                             >
                               +
                             </button>
@@ -113,7 +114,7 @@ export default function Header({
                   Total pagar: <span className='fw-bold'>${cartTotal}</span>
                 </p>
                 <button
-                  onClick={clearCart}
+                  onClick={() => dispatch({ type: "clear-cart" })}
                   className='btn btn-dark w-100 mt-3 p-2'
                 >
                   Vaciar Carrito
